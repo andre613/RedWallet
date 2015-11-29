@@ -1,21 +1,25 @@
 #!/usr/bin/python
+import os
 import sys
 import pygbutton 
 import pygame
 import signal
 
-ONPI = False
+if os.getenv('USER') == 'pi': 
+  ONPI = True
+else:
+  ONPI = False
 
 if ONPI:
   os.putenv('SDL_FBDEV', '/dev/fb1')
   os.putenv('SDL_MOUSEDRV', 'TSLIB')
   os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
-  pygame.init()
-  pygame.mouse.set_visible(False)
 
+pygame.init()
 DISPLAYSURFACE = pygame.display.set_mode((320,240))
-FONTBIG = pygame.font.Font(None, 50)
+pygame.mouse.set_visible(not ONPI)
 
+FONTBIG = pygame.font.Font(None, 50)
 WHITE = (255,255,255)
 RED = (255,0,0)
 BLUE = (0,255,0)
@@ -23,12 +27,10 @@ BLUE = (0,255,0)
 def renderText(lines, default_color=WHITE):
   for i in range(len(lines)):
     print "Rendering text line %s"%(i+1)
-
     if isinstance(lines[i], tuple):
       text = FONTBIG.render(lines[i][0], True, lines[i][1])
     else:
       text = FONTBIG.render(lines[i], True, default_color)
-    
     DISPLAYSURFACE.blit(text, text.get_rect(center=(160,30*(i+1))))
 
 def MENUmain():
@@ -71,24 +73,18 @@ def MENUsignTransaction():
   )
 
 #Set up the main menu
-# menuOut = MENUmain()
-# currentText = menuOut[0]
-# currentButtons = menuOut[1]
-
 currentText, currentButtons = MENUmain()
 redraw = True
 
+#Main loop
 while True:
 
   if redraw:
     DISPLAYSURFACE.fill((0,0,0))
-
     renderText(currentText)
-
     for b in currentButtons:
       print b
       b[0].draw(DISPLAYSURFACE)
-
     pygame.display.update()
     redraw = False
 
