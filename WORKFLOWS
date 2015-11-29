@@ -1,0 +1,23 @@
+UC1 - Create a new wallet
+1. Insert RED key AND blue key
+2. Create wallet with timestamp in the name. Write only to RED key.
+3. Export watch-only wallet to BLUE key
+4. Remove RED and BLUE keys
+
+UC2 - Sign a transaction
+1. Create unsigned transaction in electrum
+2. Insert BLUE key. Copy tx. #Remove BLUE key
+3. Insert RED key. Sign tx. Remove RED key. #Encode tx json to QR on-screen.
+4. Insert BLUE key. Copy signed tx to BLUE key
+
+UC3 - Run a wallet test
+1. Insert RED key. Copy key to memory. Remove RED key. 
+2. Sign a message, display via QR. #Validate through some app
+3. Insert BLUE key. Copy message. Remove BLUE key
+
+UC4 - Generate a wallet with dice
+1.
+
+
+INSPIRATION
+https://www.turnkeylinux.org/blog/secure-bitcoin-transactions
