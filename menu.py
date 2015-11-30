@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import os
 import sys
 import pygbutton 
 import pygame
@@ -6,24 +7,28 @@ import signal
 import subprocess
 import time
 
-ONPI = False
+if os.getenv('USER') == 'pi': 
+  ONPI = True
+else:
+  ONPI = False
 
 if ONPI:
   os.putenv('SDL_FBDEV', '/dev/fb1')
   os.putenv('SDL_MOUSEDRV', 'TSLIB')
   os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
-  pygame.init()
-  pygame.mouse.set_visible(False)
 
+pygame.init()
 DISPLAYSURFACE = pygame.display.set_mode((320,240))
-FONTBIG = pygame.font.Font(None, 50)
+pygame.mouse.set_visible(not ONPI)
 
+FONTBIG = pygame.font.Font(None, 50)
 WHITE = (255,255,255)
 RED = (255,0,0)
 BLUE = (0,0,255)
 
 def renderText(lines, default_color=WHITE):
   for i in range(len(lines)):
+
     if isinstance(lines[i], tuple):
       text = FONTBIG.render(lines[i][0], True, lines[i][1])
     else:
@@ -142,13 +147,10 @@ while running:
 
   if redraw:
     DISPLAYSURFACE.fill((0,0,0))
-
     renderText(currentText)
-
     for b in currentButtons:
       print b
       b[0].draw(DISPLAYSURFACE)
-
     pygame.display.update()
     redraw = False
 
