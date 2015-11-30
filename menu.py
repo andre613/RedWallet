@@ -137,7 +137,8 @@ def MENUsignTransaction():
 currentText, currentButtons = MENUmain()
 redraw = True
 
-while True:
+running = True
+while running:
 
   if redraw:
     DISPLAYSURFACE.fill((0,0,0))
@@ -152,6 +153,12 @@ while True:
     redraw = False
 
   for event in pygame.event.get():
+
+    if event.type == pygame.QUIT:
+        running = False
+    elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+        running = False
+
     for b in currentButtons: # read buttons
       if 'click' in b[0].handleEvent(event):        
         currentText, currentButtons = b[1]()
