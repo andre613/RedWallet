@@ -7,7 +7,7 @@ import signal
 import subprocess
 import time
 
-if os.getenv('USER') == 'pi': 
+if os.getenv('USER') == 'root': # ***** Obviously bull, but it will do for now
   ONPI = True
 else:
   ONPI = False
@@ -131,11 +131,80 @@ def MENUcreateKeys():
 
 def MENUsignTransaction():
   return (
-    ("S"),
+    (
+      "",
+      "",
+      "Remove ALL Keys"
+    ),
     (
       (pygbutton.PygButton((0, 180, 140, 60), 'CANCEL'), MENUmain),
-      (pygbutton.PygButton((180, 180, 140, 60), 'OK'), MENUcreateRedKey)
+      (pygbutton.PygButton((180, 180, 140, 60), 'OK'), MENUsignBlueKey)
     )
+  )
+
+def MENUsignBlueKey():
+  return (
+    (
+      "Insert the",
+      ("BLUE", BLUE),
+      "Key",
+      "with your",
+      "transaction"
+    ),
+    (
+      (pygbutton.PygButton((0, 180, 140, 60), 'CANCEL'), MENUmain),
+      (pygbutton.PygButton((180, 180, 140, 60), 'OK'), MENUsignRedKey)
+    )
+  )
+
+def MENUsignRedKey():
+  return (
+    (
+      "Insert the",
+      "",
+      ("RED", RED),
+      "",
+      "Key"
+    ),
+    (
+      (pygbutton.PygButton((0, 180, 140, 60), 'CANCEL'), MENUmain),
+      (pygbutton.PygButton((180, 180, 140, 60), 'OK'), MENUsignTx)
+    )
+  )
+
+def MENUsignTx():
+
+  if ONPI:
+    os.mkdir('/media/REDKEY')
+    os.mkdir('/media/BLUEKEY')
+
+    subprocess.check_call('mount','/dev/sda1', '/media/REDKEY')
+    subprocess.check_call('mount','/dev/sdb1', '/media/BLUEKEY')
+
+    # wallet_ts = '{0:f}'.format(time.time())
+    # wallet_name = 'redwallet-RED-' + wallet_ts + '_wallet'
+    # wallet_path = '/media/REDKEY/' + wallet_name
+
+    # subprocess.check_call('electrum', 'create', '-o', '-w', wallet_path)
+
+    # shutil.copy(wallet_path, '/run')
+
+    # subprocess.check_call('electrum', 'deseed', '-o', '-w', '/run/' + wallet_name)
+
+    # shutil.move('/run/' + wallet_name, '/media/BLUEKEY/redwallet-BLUE-' + wallet_ts + '_wallet')
+
+    subprocess.check_call('umount', '/media/REDKEY')
+    subprocess.check_call('umount', '/media/BLUEKEY')
+
+  return (
+    (
+      "Transaction"
+      "Signed",
+      "You can now",
+      "REMOVE",
+      "BOTH KEYS"
+    ),
+    ( (pygbutton.PygButton((0, 180, 320, 60), 'OK'), MENUmain), ) # I am a python newb, if you are too, note the trailing comma to create a 1 element tuple
   )
 
 #Set up the main menu
@@ -156,9 +225,7 @@ while running:
 
   for event in pygame.event.get():
 
-    if event.type == pygame.QUIT:
-        running = False
-    elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+    if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
         running = False
 
     for b in currentButtons: # read buttons
